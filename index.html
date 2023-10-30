@@ -61,7 +61,7 @@
         );
         const dropRate =
           parseFloat(document.getElementById("dropRate").value) / 100;
-        let output = "Week  Odds    Total Runs  Months\n";
+        let output = "Week  Months  Years  Odds    Total Runs\n";
         let totalRuns = 0;
 
         if (
@@ -79,6 +79,7 @@
         let odds = 0.0;
         const maxWeeks = 1000;
         let months = 0;
+        let years = 0;
 
         while (odds < 100 && week <= maxWeeks) {
           odds = findCumulativeOdds(week, runsPerWeek, dropRate);
@@ -88,7 +89,11 @@
             months++;
           }
 
-          output += `${week}      ${odds}%     ${totalRuns}      ${months} months\n`;
+          if (week % 52 === 0) {
+            years++;
+          }
+
+          output += `${week}      ${months}      ${years}      ${odds}%     ${totalRuns}\n`;
           week++;
         }
 
