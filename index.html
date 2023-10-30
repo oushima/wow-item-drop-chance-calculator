@@ -25,14 +25,6 @@
       #output {
         margin-top: 20px;
       }
-      @media screen and (max-width: 600px) {
-        .input-box {
-          font-size: 16px;
-        }
-        #output {
-          font-size: 14px;
-        }
-      }
     </style>
   </head>
   <body>
@@ -50,9 +42,7 @@
         class="input-box"
         placeholder="Drop rate (%)"
       />
-      <br />
-      <br />
-      <br />
+      <br /><br /><br />
       <button onclick="calculate()">Calculate</button>
       <pre id="output"></pre>
     </div>
@@ -71,7 +61,7 @@
         );
         const dropRate =
           parseFloat(document.getElementById("dropRate").value) / 100;
-        let output = "Week  Odds    Total Runs\n";
+        let output = "Week  Odds    Total Runs  Months\n";
         let totalRuns = 0;
 
         if (
@@ -88,11 +78,17 @@
         let week = 1;
         let odds = 0.0;
         const maxWeeks = 1000;
+        let months = 0;
 
         while (odds < 100 && week <= maxWeeks) {
           odds = findCumulativeOdds(week, runsPerWeek, dropRate);
           totalRuns += runsPerWeek;
-          output += `${week}      ${odds}%     ${totalRuns}\n`;
+
+          if (week % 4 === 0) {
+            months++;
+          }
+
+          output += `${week}      ${odds}%     ${totalRuns}      ${months} months\n`;
           week++;
         }
 
