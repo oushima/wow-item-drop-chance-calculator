@@ -61,7 +61,7 @@
         );
         const dropRate =
           parseFloat(document.getElementById("dropRate").value) / 100;
-        let output = "Week  Months  Years  Odds    Total Runs\n";
+        let output = "Week   Odds   |  Total Runs  Months  Years\n";
         let totalRuns = 0;
 
         if (
@@ -93,7 +93,7 @@
             years++;
           }
 
-          output += `${week}      ${months}      ${years}      ${odds}%     ${totalRuns}\n`;
+          output += `${week}      ${odds}%   |  ${totalRuns}          ${months}       ${years}\n`;
           week++;
         }
 
