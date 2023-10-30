@@ -71,7 +71,8 @@
         );
         const dropRate =
           parseFloat(document.getElementById("dropRate").value) / 100;
-        let output = "Week  Odds\n";
+        let output = "Week  Odds    Total Runs\n";
+        let totalRuns = 0;
 
         if (
           isNaN(runsPerWeek) ||
@@ -90,7 +91,8 @@
 
         while (odds < 100 && week <= maxWeeks) {
           odds = findCumulativeOdds(week, runsPerWeek, dropRate);
-          output += `${week}      ${odds}%\n`;
+          totalRuns += runsPerWeek;
+          output += `${week}      ${odds}%     ${totalRuns}\n`;
           week++;
         }
 
@@ -100,6 +102,13 @@
 
         document.getElementById("output").textContent = output;
       }
+
+      // Add an event listener to trigger calculation on "Enter" keypress
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          calculate();
+        }
+      });
     </script>
   </body>
 </html>
