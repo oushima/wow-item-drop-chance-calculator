@@ -1,6 +1,6 @@
 # WoW Item Drop Chance Calculator
 
-Try it live: [GitHub Pages Link](https://oushima.github.io/WoW-Item-Drop-Chance-Calculator)
+Try it live: [GitHub Pages Link](https://oushima.github.io/wow-item-drop-chance-calculator)
 
 This calculator is designed to estimate the odds of acquiring a particular item over multiple runs in the World of Warcraft game. Below is the explanation of the formula used to calculate these odds.
 
