@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WoW Item Drop Chance Calculator</title>
-    <link rel="icon" href="favicon.jpg" type="image/x-icon" />
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -23,8 +22,23 @@
         font-size: 18px;
         width: 90%;
       }
-      #output {
-        margin-top: 20px;
+      .output-header,
+      .output-row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .column {
+        flex: 1;
+        text-align: center;
+        width: 20%; /* specify a width */
+      }
+      #output-container {
+        max-height: 250px;
+        overflow-y: auto;
+      }
+      .hidden {
+        display: none;
       }
     </style>
   </head>
@@ -45,7 +59,16 @@
       />
       <br /><br /><br />
       <button onclick="calculate()">Calculate</button>
-      <pre id="output"></pre>
+      <div id="output-header" class="output-header hidden">
+        <div class="column">Week</div>
+        <div class="column">Odds</div>
+        <div class="column">Runs</div>
+        <div class="column">Months</div>
+        <div class="column">Years</div>
+      </div>
+      <div id="output-container" class="hidden">
+        <div id="output"></div>
+      </div>
     </div>
     <script>
       function findCumulativeOdds(weeks, runsPerWeek, dropRate) {
@@ -53,7 +76,7 @@
         const notDropRate = 1 - dropRate;
         const oddsOfNotGettingItem = Math.pow(notDropRate, totalRuns);
         const oddsOfGettingItem = 1 - oddsOfNotGettingItem;
-        return (oddsOfGettingItem * 100).toFixed(2);
+        return parseFloat((oddsOfGettingItem * 100).toFixed(2));
       }
 
       function calculate() {
@@ -62,7 +85,6 @@
         );
         const dropRate =
           parseFloat(document.getElementById("dropRate").value) / 100;
-        let output = "Week   Odds   |  Total Runs  Months  Years\n";
         let totalRuns = 0;
 
         if (
@@ -76,11 +98,16 @@
           return;
         }
 
+        document.getElementById("output-header").classList.remove("hidden");
+        document.getElementById("output-container").classList.remove("hidden");
+
         let week = 1;
         let odds = 0.0;
         const maxWeeks = 1000;
         let months = 0;
         let years = 0;
+        let output = document.getElementById("output");
+        output.innerHTML = "";
 
         while (odds < 100 && week <= maxWeeks) {
           odds = findCumulativeOdds(week, runsPerWeek, dropRate);
@@ -94,15 +121,32 @@
             years++;
           }
 
-          output += `${week}      ${odds}%   |  ${totalRuns}          ${months}       ${years}\n`;
+          let row = document.createElement("div");
+          row.className = "output-row";
+
+          [week, odds.toFixed(2) + "%", totalRuns, months, years].forEach(
+            (text) => {
+              let col = document.createElement("div");
+              col.className = "column";
+              col.innerText = text;
+              row.appendChild(col);
+            }
+          );
+
+          output.appendChild(row);
           week++;
         }
 
         if (week > maxWeeks) {
-          output += "Stopped after 1000 weeks.";
+          let row = document.createElement("div");
+          row.className = "output-row";
+          let col = document.createElement("div");
+          col.className = "column";
+          col.innerText = "Stopped after 1000 weeks.";
+          col.colSpan = 5;
+          row.appendChild(col);
+          output.appendChild(row);
         }
-
-        document.getElementById("output").textContent = output;
       }
 
       // Add an event listener to trigger calculation on "Enter" keypress
