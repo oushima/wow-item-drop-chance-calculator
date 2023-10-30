@@ -48,7 +48,8 @@
     <div class="container">
       <h3>WoW Item Drop Chance Calculator</h3>
       <input
-        type="tel"
+        type="text"
+        inputmode="decimal"
         id="runsPerWeek"
         class="input-box"
         placeholder="Runs per week. E.g.: 20"
@@ -58,7 +59,7 @@
         inputmode="decimal"
         id="dropRate"
         class="input-box"
-        placeholder="Drop rate (%). E.g.: 0.1"
+        placeholder="Drop rate (%). E.g.: 0.1 or 0,1"
       />
       <br /><br />
       <button onclick="calculate()">Calculate</button>
@@ -86,10 +87,12 @@
 
       function calculate() {
         const runsPerWeek = parseFloat(
-          document.getElementById("runsPerWeek").value
+          document.getElementById("runsPerWeek").value.replace(",", ".")
         );
         const dropRate =
-          parseFloat(document.getElementById("dropRate").value) / 100;
+          parseFloat(
+            document.getElementById("dropRate").value.replace(",", ".")
+          ) / 100;
         let totalRuns = 0;
 
         if (
