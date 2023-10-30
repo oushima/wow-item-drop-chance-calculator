@@ -4,7 +4,7 @@
 
 This project is a calculator for determining the cumulative odds of getting a specific item in World of Warcraft over a given number of weeks.
 
-Try it live: [GitHub Pages Link](#) <!-- Replace with your actual GitHub Pages link -->
+Try it live: [GitHub Pages Link](https://oushima.github.io/WoW-Item-Drop-Chance-Calculator)
 
 ## Features
 
