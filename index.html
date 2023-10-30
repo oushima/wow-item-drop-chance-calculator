@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WoW Item Drop Chance Calculator</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .container {
+        background-color: #f4f4f4;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      .input-box {
+        margin: 10px;
+        padding: 10px;
+        font-size: 18px;
+        width: 90%;
+      }
+      #output {
+        margin-top: 20px;
+      }
+      @media screen and (max-width: 600px) {
+        .input-box {
+          font-size: 16px;
+        }
+        #output {
+          font-size: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>WoW Item Drop Chance Calculator</h1>
+      <input
+        type="number"
+        id="runsPerWeek"
+        class="input-box"
+        placeholder="Runs per week"
+      />
+      <input
+        type="number"
+        id="dropRate"
+        class="input-box"
+        placeholder="Drop rate (%)"
+      />
+      <br />
+      <br />
+      <br />
+      <button onclick="calculate()">Calculate</button>
+      <pre id="output"></pre>
+    </div>
+    <script>
+      function findCumulativeOdds(weeks, runsPerWeek, dropRate) {
+        const totalRuns = runsPerWeek * weeks;
+        const notDropRate = 1 - dropRate;
+        const oddsOfNotGettingItem = Math.pow(notDropRate, totalRuns);
+        const oddsOfGettingItem = 1 - oddsOfNotGettingItem;
+        return (oddsOfGettingItem * 100).toFixed(2);
+      }
+
+      function calculate() {
+        const runsPerWeek = parseFloat(
+          document.getElementById("runsPerWeek").value
+        );
+        const dropRate =
+          parseFloat(document.getElementById("dropRate").value) / 100;
+        let output = "Week  Odds\n";
+
+        if (
+          isNaN(runsPerWeek) ||
+          isNaN(dropRate) ||
+          runsPerWeek <= 0 ||
+          dropRate <= 0 ||
+          dropRate >= 1
+        ) {
+          alert("Please enter valid values.");
+          return;
+        }
+
+        let week = 1;
+        let odds = 0.0;
+        const maxWeeks = 1000;
+
+        while (odds < 100 && week <= maxWeeks) {
+          odds = findCumulativeOdds(week, runsPerWeek, dropRate);
+          output += `${week}      ${odds}%\n`;
+          week++;
+        }
+
+        if (week > maxWeeks) {
+          output += "Stopped after 1000 weeks.";
+        }
+
+        document.getElementById("output").textContent = output;
+      }
+    </script>
+  </body>
+</html>
