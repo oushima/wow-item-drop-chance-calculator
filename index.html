@@ -51,6 +51,8 @@
         type="text"
         inputmode="decimal"
         id="runsPerWeek"
+        maxlength="3"
+        minlength="1"
         class="input-box"
         placeholder="Runs per week. E.g.: 20"
       />
@@ -63,6 +65,9 @@
       />
       <br /><br />
       <button onclick="calculate()">Calculate</button>
+      <label>
+        <input type="checkbox" id="liveCalcToggle" checked /> Live Calculate
+      </label>
       <br /><br />
 
       <div id="output-header" class="output-header hidden">
@@ -95,14 +100,8 @@
           ) / 100;
         let totalRuns = 0;
 
-        if (
-          isNaN(runsPerWeek) ||
-          isNaN(dropRate) ||
-          runsPerWeek <= 0 ||
-          dropRate <= 0 ||
-          dropRate >= 1
-        ) {
-          alert("Please enter valid values.");
+        if (runsPerWeek <= 0 || dropRate <= 0 || dropRate >= 1) {
+          throw Error("Please enter valid values.");
           return;
         }
 
@@ -162,6 +161,58 @@
         if (event.key === "Enter") {
           calculate();
         }
+      });
+
+      // Handle input change.
+      function handleChange() {
+        const runsPerWeekInput = document.getElementById("runsPerWeek").value;
+        const dropRateInput = document.getElementById("dropRate").value;
+        const liveCalcEnabled =
+          document.getElementById("liveCalcToggle").checked;
+
+        // Check if both fields have valid values
+        if (
+          liveCalcEnabled &&
+          runsPerWeekInput &&
+          dropRateInput &&
+          !isNaN(parseFloat(runsPerWeekInput.replace(",", "."))) &&
+          !isNaN(parseFloat(dropRateInput.replace(",", ".")))
+        ) {
+          // Only then execute the calculation
+          calculate();
+        } else if (!liveCalcEnabled && runsPerWeekInput && dropRateInput) {
+          // Do nothing when live-calculation is off, and both fields have some value
+        } else {
+          // Hide the output if one or both fields are completely empty
+          document.getElementById("output-header").classList.add("hidden");
+          document.getElementById("output-container").classList.add("hidden");
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const runsPerWeekInput = document.getElementById("runsPerWeek");
+        const dropRateInput = document.getElementById("dropRate");
+        const liveCalcToggle = document.getElementById("liveCalcToggle");
+
+        // Attach event listeners
+        runsPerWeekInput.addEventListener("input", handleChange);
+        dropRateInput.addEventListener("input", handleChange);
+        liveCalcToggle.addEventListener("change", handleChange);
+
+        // Check if fields are empty or not valid numbers
+        if (
+          !runsPerWeekInput ||
+          !dropRateInput ||
+          isNaN(parseFloat(runsPerWeekInput)) ||
+          isNaN(parseFloat(dropRateInput))
+        ) {
+          document.getElementById("output-header").classList.add("hidden");
+          document.getElementById("output-container").classList.add("hidden");
+          return;
+        }
+
+        // Initial calculation
+        calculate();
       });
     </script>
   </body>
