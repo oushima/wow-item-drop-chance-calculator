@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WoW Item Drop Chance Calculator</title>
+    <link rel="icon" href="favicon.jpg" type="image/x-icon" />
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon.jpg" />
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -34,7 +36,7 @@
         width: 20%; /* specify a width */
       }
       #output-container {
-        max-height: 250px;
+        max-height: 200px;
         overflow-y: auto;
       }
       .hidden {
@@ -44,7 +46,7 @@
   </head>
   <body>
     <div class="container">
-      <h1>WoW Item Drop Chance Calculator</h1>
+      <h3>WoW Item Drop Chance Calculator</h3>
       <input
         type="number"
         id="runsPerWeek"
@@ -57,9 +59,9 @@
         class="input-box"
         placeholder="Drop rate (%). E.g.: 0.1"
       />
-      <br /><br /><br />
+      <br /><br />
       <button onclick="calculate()">Calculate</button>
-      <br /><br /><br />
+      <br /><br />
 
       <div id="output-header" class="output-header hidden">
         <div class="column">Week</div>
