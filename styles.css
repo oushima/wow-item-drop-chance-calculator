@@ -35,7 +35,7 @@ body {
   flex: 1;
   text-align: center;
 }
-#output-container {
+.output-container {
   max-height: 200px;
   overflow-y: auto;
 }
