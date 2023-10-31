@@ -12,6 +12,12 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: 20px;
+}
+
+.input-labels {
+  display: flex;
+  flex-direction: column;
 }
 .input-box {
   margin: 10px;

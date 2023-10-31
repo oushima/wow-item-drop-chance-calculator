@@ -13,25 +13,29 @@
     <div class="container">
       <h3>WoW Item Drop Chance Calculator</h3>
       <div class="input-container">
-        <input
-          type="text"
-          inputmode="decimal"
-          id="runsPerWeek"
-          maxlength="5"
-          minlength="1"
-          class="input-box"
-          placeholder="Runs per week. E.g.: 20"
-        />
+        <div class="input-labels">
+          Runs per week<input
+            type="text"
+            inputmode="decimal"
+            id="runsPerWeek"
+            maxlength="5"
+            minlength="1"
+            class="input-box"
+            placeholder="Runs per week. E.g.: 20"
+          />
+        </div>
 
-        <input
-          type="text"
-          inputmode="decimal"
-          id="dropRate"
-          class="input-box"
-          placeholder="Drop rate. E.g.: 0.1 or 0,1"
-          maxlength="5"
-          minlength="1"
-        />
+        <div class="input-labels">
+          Drop rate (%)<input
+            type="text"
+            inputmode="decimal"
+            id="dropRate"
+            class="input-box"
+            placeholder="Drop rate. E.g.: 0.1 or 0,1"
+            maxlength="5"
+            minlength="1"
+          />
+        </div>
       </div>
       <div class="action-container">
         <button onclick="calculate()" class="calculate-btn" id="calculate-btn">
