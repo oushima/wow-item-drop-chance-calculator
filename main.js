@@ -61,7 +61,8 @@ function shouldRunCalculation() {
     runsPerWeekInput.value &&
     dropRateInput.value &&
     !isNaN(normalizeInput(runsPerWeekInput.value)) &&
-    isValidDropRate(dropRateInput.value)
+    isValidDropRate(dropRateInput.value) &&
+    isValidInteger(runsPerWeekInput.value) // Check if the runsPerWeekInput is a valid integer
   );
 }
 
@@ -77,6 +78,7 @@ function handleUIVisibility(shouldShow) {
 
 function handleChange() {
   validateElement(dropRateInput, /^\d{1,2}([.,]\d{1,2})?$/);
+  validateElement(runsPerWeekInput, /^\d+$/); // Validate if runsPerWeekInput is an integer
 
   const shouldShow = shouldRunCalculation();
   handleUIVisibility(shouldShow);
@@ -98,11 +100,23 @@ function runCalculationsAndUpdateUI(
   let months = Math.floor(week / 4);
   let years = Math.floor(week / 52);
 
+  if (odds >= 0.999) {
+    // Check if the odds have reached or exceeded 99.9%
+    addOutputRow(
+      output,
+      [week, `99${commaUsed ? "," : "."}99%`, totalRuns, months, years],
+      commaUsed
+    );
+    return true; // Return true to indicate that 99.9% has been reached
+  }
+
   addOutputRow(
     output,
     [week, (odds * 100).toFixed(2) + "%", totalRuns, months, years],
     commaUsed
   );
+
+  return false; // Return false to indicate that 99.9% has not been reached
 }
 
 function calculateOdds() {
@@ -119,17 +133,27 @@ function calculateOdds() {
   const output = document.getElementById("output");
   output.innerHTML = "";
 
-  const runLoop = () => {
+  function runLoop() {
     if (week > maxWeeks) {
       addOutputRow(output, ["Stopped after 1000 weeks."], false);
       return;
     }
 
-    runCalculationsAndUpdateUI(week, runsPerWeek, dropRate, commaUsed, output);
+    // If runCalculationsAndUpdateUI returns true, stop the loop
+    if (
+      runCalculationsAndUpdateUI(week, runsPerWeek, dropRate, commaUsed, output)
+    ) {
+      addOutputRow(
+        output,
+        ["Stopped: Reached statistical certainty of 100% (upper limit)."],
+        false
+      );
+      return;
+    }
 
     week++;
     loopId = setTimeout(runLoop, 0);
-  };
+  }
 
   runLoop();
 }
@@ -137,6 +161,9 @@ function calculateOdds() {
 document.addEventListener("DOMContentLoaded", function () {
   dropRateInput.addEventListener("input", handleChange);
   runsPerWeekInput.addEventListener("input", handleChange);
+
+  const calculateButton = document.getElementById("calculate-btn");
+  calculateButton.addEventListener("click", calculateOdds);
 });
 
 document.addEventListener("keydown", function (event) {
@@ -144,3 +171,8 @@ document.addEventListener("keydown", function (event) {
     calculateOdds();
   }
 });
+
+function isValidInteger(value) {
+  const pattern = /^\d+$/;
+  return pattern.test(value);
+}
