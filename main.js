@@ -1,3 +1,10 @@
+// Store elements at the top
+const runsPerWeekInput = document.getElementById("runsPerWeek");
+const dropRateInput = document.getElementById("dropRate");
+const outputHeader = document.getElementById("output-header");
+const outputContainer = document.getElementById("output-container");
+const liveCalcToggle = document.getElementById("liveCalcToggle");
+
 let loopId = null;
 
 function isValidDropRate(dropRateInput) {
@@ -49,51 +56,77 @@ function addOutputRow(output, values, commaUsed) {
   output.appendChild(row);
 }
 
+function shouldRunCalculation() {
+  return (
+    runsPerWeekInput.value &&
+    dropRateInput.value &&
+    !isNaN(normalizeInput(runsPerWeekInput.value)) &&
+    isValidDropRate(dropRateInput.value)
+  );
+}
+
+function handleUIVisibility(shouldShow) {
+  if (shouldShow) {
+    outputHeader.classList.remove("hidden");
+    outputContainer.classList.remove("hidden");
+  } else {
+    outputHeader.classList.add("hidden");
+    outputContainer.classList.add("hidden");
+  }
+}
+
+function handleChange() {
+  validateElement(dropRateInput, /^\d{1,2}([.,]\d{1,2})?$/);
+
+  const shouldShow = shouldRunCalculation();
+  handleUIVisibility(shouldShow);
+
+  if (liveCalcToggle.checked && shouldShow) {
+    calculateOdds();
+  }
+}
+
+function runCalculationsAndUpdateUI(
+  week,
+  runsPerWeek,
+  dropRate,
+  commaUsed,
+  output
+) {
+  const odds = findCumulativeOdds(week, runsPerWeek, dropRate);
+  const totalRuns = runsPerWeek * week;
+  let months = Math.floor(week / 4);
+  let years = Math.floor(week / 52);
+
+  addOutputRow(
+    output,
+    [week, (odds * 100).toFixed(2) + "%", totalRuns, months, years],
+    commaUsed
+  );
+}
+
 function calculateOdds() {
   if (loopId) {
     clearTimeout(loopId);
   }
-
-  const runsPerWeekInput = document.getElementById("runsPerWeek");
-  const dropRateInput = document.getElementById("dropRate");
 
   const commaUsed = dropRateInput.value.includes(",");
   const runsPerWeek = normalizeInput(runsPerWeekInput.value);
   const dropRate = normalizeInput(dropRateInput.value) / 100;
 
   let week = 1;
-  let odds = 0.0;
-  let months = 0;
-  let years = 0;
-  let totalRuns = 0;
   const maxWeeks = 1000;
   const output = document.getElementById("output");
   output.innerHTML = "";
 
   const runLoop = () => {
-    if (week > maxWeeks || odds >= 1) {
-      if (week > maxWeeks) {
-        addOutputRow(output, ["Stopped after 1000 weeks."], false);
-      }
+    if (week > maxWeeks) {
+      addOutputRow(output, ["Stopped after 1000 weeks."], false);
       return;
     }
 
-    odds = findCumulativeOdds(week, runsPerWeek, dropRate);
-    totalRuns += runsPerWeek;
+    runCalculationsAndUpdateUI(week, runsPerWeek, dropRate, commaUsed, output);
 
-    if (week % 4 === 0) {
-      months++;
-    }
-
-    if (week % 52 === 0) {
-      years++;
-    }
-
-    addOutputRow(
-      output,
-      [week, (odds * 100).toFixed(2) + "%", totalRuns, months, years],
-      commaUsed
-    );
     week++;
     loopId = setTimeout(runLoop, 0);
   };
@@ -101,29 +134,7 @@ function calculateOdds() {
   runLoop();
 }
 
-function handleChange() {
-  if (loopId) {
-    clearTimeout(loopId);
-  }
-
-  const runsPerWeekInput = document.getElementById("runsPerWeek");
-  const dropRateInput = document.getElementById("dropRate");
-
-  validateElement(dropRateInput, /^\d{1,2}([.,]\d{1,2})?$/);
-
-  if (
-    runsPerWeekInput.value &&
-    dropRateInput.value &&
-    isValidDropRate(dropRateInput.value)
-  ) {
-    calculateOdds();
-  }
-}
-
 document.addEventListener("DOMContentLoaded", function () {
-  const dropRateInput = document.getElementById("dropRate");
-  const runsPerWeekInput = document.getElementById("runsPerWeek");
-
   dropRateInput.addEventListener("input", handleChange);
   runsPerWeekInput.addEventListener("input", handleChange);
 });
