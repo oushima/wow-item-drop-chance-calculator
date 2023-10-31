@@ -27,9 +27,12 @@ body {
 .input-box.invalid {
   color: red;
 }
-.input-box.invalid::placeholder {
-  color: initial;
+
+input::placeholder,
+input:invalid::placeholder {
+  color: grey; /* or any color you want */
 }
+
 .output-header,
 .output-row {
   display: flex;
