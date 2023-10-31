@@ -79,6 +79,15 @@ function handleUIVisibility(shouldShow) {
 }
 
 function handleChange() {
+  // Remove leading zeros for dropRate and runsPerWeek if present
+  if (/^0+[1-9]+([.,]\d{1,2})?$/.test(dropRateInput.value)) {
+    dropRateInput.value = dropRateInput.value.replace(/^0+/, "");
+  }
+
+  if (/^0+[1-9]+$/.test(runsPerWeekInput.value)) {
+    runsPerWeekInput.value = parseInt(runsPerWeekInput.value, 10).toString();
+  }
+
   // Validate input and make it red if invalid
   const dropRateValue = dropRateInput.value;
   const validDropRate = isValidDropRate(dropRateValue);
@@ -95,12 +104,6 @@ function handleChange() {
     dropRateValue === "0.0"
   ) {
     addInvalidClass(dropRateInput);
-  }
-
-  // Remove leading zero for runsPerWeek if present
-  const runsPerWeekValue = runsPerWeekInput.value;
-  if (/^0[1-9]+$/.test(runsPerWeekValue)) {
-    runsPerWeekInput.value = parseInt(runsPerWeekValue, 10).toString();
   }
 
   // Validate runsPerWeek and turn red if invalid
