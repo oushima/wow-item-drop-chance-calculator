@@ -30,7 +30,7 @@ body {
 
 input::placeholder,
 input:invalid::placeholder {
-  color: grey; /* or any color you want */
+  color: grey;
 }
 
 .output-header,
