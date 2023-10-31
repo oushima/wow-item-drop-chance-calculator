@@ -7,7 +7,7 @@ const liveCalcToggle = document.getElementById("liveCalcToggle");
 let loopId = null;
 
 function isValidDropRate(dropRateInput) {
-  const pattern = /^(?!0*[.,]0*$)\d{1,2}([.,]\d{1,2})?$/;
+  const pattern = /^(?!0*[.,]0*$)([0]?[.,])?\d{1,2}([.,]\d{1,2})?$/;
   return pattern.test(dropRateInput);
 }
 
