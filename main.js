@@ -7,7 +7,7 @@ const liveCalcToggle = document.getElementById("liveCalcToggle");
 let loopId = null;
 
 function isValidDropRate(dropRateInput) {
-  const pattern = /^\d{1,2}([.,]\d{1,2})?$/;
+  const pattern = /^(?!0*[.,]0*$)\d{1,2}([.,]\d{1,2})?$/;
   return pattern.test(dropRateInput);
 }
 
@@ -56,12 +56,15 @@ function addOutputRow(output, values, commaUsed) {
 }
 
 function shouldRunCalculation() {
+  const normalizedRunsPerWeek = normalizeInput(runsPerWeekInput.value);
+  const normalizedDropRate = normalizeInput(dropRateInput.value);
+
   return (
-    runsPerWeekInput.value &&
-    dropRateInput.value &&
-    !isNaN(normalizeInput(runsPerWeekInput.value)) &&
+    normalizedRunsPerWeek > 0 && // Disallow 0 for runsPerWeek
+    normalizedDropRate > 0 && // Disallow 0 for dropRate
+    !isNaN(normalizedRunsPerWeek) &&
     isValidDropRate(dropRateInput.value) &&
-    isValidInteger(runsPerWeekInput.value) // Check if the runsPerWeekInput is a valid integer
+    isValidInteger(runsPerWeekInput.value)
   );
 }
 
@@ -76,8 +79,36 @@ function handleUIVisibility(shouldShow) {
 }
 
 function handleChange() {
-  validateElement(dropRateInput, /^\d{1,2}([.,]\d{1,2})?$/);
-  validateElement(runsPerWeekInput, /^\d+$/); // Validate if runsPerWeekInput is an integer
+  // Validate input and make it red if invalid
+  const dropRateValue = dropRateInput.value;
+  const validDropRate = isValidDropRate(dropRateValue);
+  const validRunsPerWeek =
+    isValidInteger(runsPerWeekInput.value) &&
+    normalizeInput(runsPerWeekInput.value) > 0;
+
+  // Turn red for '0', '0,0', '0.0'; keep black for '0,' and '0.'
+  if (validDropRate) {
+    removeInvalidClass(dropRateInput);
+  } else if (
+    dropRateValue === "0" ||
+    dropRateValue === "0,0" ||
+    dropRateValue === "0.0"
+  ) {
+    addInvalidClass(dropRateInput);
+  }
+
+  // Remove leading zero for runsPerWeek if present
+  const runsPerWeekValue = runsPerWeekInput.value;
+  if (/^0[1-9]+$/.test(runsPerWeekValue)) {
+    runsPerWeekInput.value = parseInt(runsPerWeekValue, 10).toString();
+  }
+
+  // Validate runsPerWeek and turn red if invalid
+  if (validRunsPerWeek) {
+    removeInvalidClass(runsPerWeekInput);
+  } else {
+    addInvalidClass(runsPerWeekInput);
+  }
 
   const shouldShow = shouldRunCalculation();
   handleUIVisibility(shouldShow);
