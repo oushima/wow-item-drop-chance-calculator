@@ -1,0 +1,51 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+.container {
+  background-color: #f4f4f4;
+  padding: 20px;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  text-align: center;
+}
+.input-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.input-box {
+  margin: 10px;
+  padding: 10px;
+  font-size: 18px;
+}
+.input-box.invalid {
+  color: red;
+}
+.input-box.invalid::placeholder {
+  color: initial;
+}
+.output-header,
+.output-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+.column {
+  flex: 1;
+  text-align: center;
+}
+#output-container {
+  max-height: 200px;
+  overflow-y: auto;
+}
+.hidden {
+  display: none;
+}
+.calculate-btn {
+  margin-right: 12px;
+}
+
+.action-container {
+  margin-top: 10px;
+}

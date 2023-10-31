@@ -6,82 +6,40 @@
     <title>WoW Item Drop Chance Calculator</title>
     <link rel="icon" href="favicon.jpg" type="image/x-icon" />
     <link rel="apple-touch-icon" sizes="180x180" href="favicon.jpg" />
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-      }
-      .container {
-        background-color: #f4f4f4;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        text-align: center;
-      }
-      .input-box {
-        margin: 10px;
-        padding: 10px;
-        font-size: 18px;
-        width: 90%;
-      }
-      .input-box.invalid {
-        color: red;
-      }
-      .input-box.invalid::placeholder {
-        color: initial;
-      }
-      .output-header,
-      .output-row {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      .column {
-        flex: 1;
-        text-align: center;
-        width: 20%;
-      }
-      #output-container {
-        max-height: 200px;
-        overflow-y: auto;
-      }
-      .hidden {
-        display: none;
-      }
-      .calculate-btn {
-        margin-right: 12px;
-      }
-    </style>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="container">
       <h3>WoW Item Drop Chance Calculator</h3>
-      <input
-        type="text"
-        inputmode="decimal"
-        id="runsPerWeek"
-        maxlength="3"
-        minlength="1"
-        class="input-box"
-        placeholder="Runs per week. E.g.: 20"
-        oninput="validateRunsPerWeek(this)"
-      />
+      <div class="input-container">
+        <input
+          type="text"
+          inputmode="decimal"
+          id="runsPerWeek"
+          maxlength="3"
+          minlength="1"
+          class="input-box"
+          placeholder="Runs per week. E.g.: 20"
+          oninput="validateRunsPerWeek(this)"
+        />
 
-      <input
-        type="text"
-        inputmode="decimal"
-        id="dropRate"
-        class="input-box"
-        placeholder="Drop rate (%). E.g.: 0.1 or 0,1"
-        oninput="limitDecimals(this, 2)"
-      />
-      <br /><br />
-      <button onclick="calculate()" class="calculate-btn">Calculate</button>
-      <label>
-        <input type="checkbox" id="liveCalcToggle" checked /> Live Calculate
-      </label>
-      <br /><br />
-
+        <input
+          type="text"
+          inputmode="decimal"
+          id="dropRate"
+          class="input-box"
+          placeholder="Drop rate. E.g.: 0.1 or 0,1"
+          oninput="limitDecimals(this, 2)"
+          maxlength="5"
+          minlength="1"
+        />
+      </div>
+      <div class="action-container">
+        <button onclick="calculate()" class="calculate-btn">Calculate</button>
+        <label>
+          <input type="checkbox" id="liveCalcToggle" checked /> Live Calculate
+        </label>
+      </div>
       <div id="output-header" class="output-header hidden">
         <div class="column">Week</div>
         <div class="column">Odds</div>
@@ -127,6 +85,7 @@
         if (!runsPerWeekInput?.value?.length || !dropRateInput?.value?.length) {
           return;
         }
+        const commaUsed = dropRateInput.value.includes(",");
 
         const runsPerWeek = parseFloat(
           runsPerWeekInput.value.replace(",", ".")
@@ -173,7 +132,11 @@
           let row = document.createElement("div");
           row.className = "output-row";
 
-          [week, odds.toFixed(2) + "%", totalRuns, months, years].forEach(
+          const displayOdds = commaUsed
+            ? odds.toFixed(2).replace(".", ",")
+            : odds.toFixed(2);
+
+          [week, displayOdds + "%", totalRuns, months, years].forEach(
             (text) => {
               let col = document.createElement("div");
               col.className = "column";
