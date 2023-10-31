@@ -1,4 +1,3 @@
-// Store elements at the top
 const runsPerWeekInput = document.getElementById("runsPerWeek");
 const dropRateInput = document.getElementById("dropRate");
 const outputHeader = document.getElementById("output-header");
