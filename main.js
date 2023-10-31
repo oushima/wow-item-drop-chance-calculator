@@ -68,8 +68,8 @@ function shouldRunCalculation() {
   );
 }
 
-function handleUIVisibility(shouldShow) {
-  if (shouldShow) {
+function handleUIVisibility(shouldShow, forceShow = false) {
+  if (shouldShow || forceShow) {
     outputHeader.classList.remove("hidden");
     outputContainer.classList.remove("hidden");
   } else {
@@ -114,8 +114,12 @@ function handleChange() {
   }
 
   const shouldShow = shouldRunCalculation();
-  handleUIVisibility(shouldShow);
 
+  if (liveCalcToggle.checked) {
+    handleUIVisibility(shouldShow);
+  }
+
+  // Only run calculation if liveCalcToggle is checked and shouldRunCalculation returns true
   if (liveCalcToggle.checked && shouldShow) {
     calculateOdds();
   }
@@ -192,15 +196,29 @@ function calculateOdds() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+  updateLiveCalcToggleFromStorage(); // Update checkbox state on page load
   dropRateInput.addEventListener("input", handleChange);
   runsPerWeekInput.addEventListener("input", handleChange);
 
   const calculateButton = document.getElementById("calculate-btn");
-  calculateButton.addEventListener("click", calculateOdds);
+  calculateButton.addEventListener("click", function () {
+    if (shouldRunCalculation()) {
+      handleUIVisibility(true, true);
+      calculateOdds();
+    }
+  });
+  liveCalcToggle.addEventListener("change", function () {
+    saveLiveCalcToggleToStorage(); // Save checkbox state when changed
+  });
 });
 
 document.addEventListener("keydown", function (event) {
-  if (event.key === "Enter") {
+  if (
+    event.key === "Enter" &&
+    !liveCalcToggle.checked &&
+    shouldRunCalculation()
+  ) {
+    handleUIVisibility(true, true);
     calculateOdds();
   }
 });
@@ -208,4 +226,19 @@ document.addEventListener("keydown", function (event) {
 function isValidInteger(value) {
   const pattern = /^\d+$/;
   return pattern.test(value);
+}
+
+// Update this function to disable the checkbox by default
+function updateLiveCalcToggleFromStorage() {
+  const storedValue = localStorage.getItem("liveCalcToggle");
+  if (storedValue === null) {
+    liveCalcToggle.checked = false; // Set default state to disabled
+    localStorage.setItem("liveCalcToggle", "false"); // Save the default state
+  } else {
+    liveCalcToggle.checked = storedValue === "true"; // Use the stored value
+  }
+}
+
+function saveLiveCalcToggleToStorage() {
+  localStorage.setItem("liveCalcToggle", liveCalcToggle.checked.toString());
 }
