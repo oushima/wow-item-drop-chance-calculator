@@ -42,6 +42,9 @@
       .hidden {
         display: none;
       }
+      .calculate-btn {
+        margin-right: 12px;
+      }
     </style>
   </head>
   <body>
@@ -64,7 +67,7 @@
         placeholder="Drop rate (%). E.g.: 0.1 or 0,1"
       />
       <br /><br />
-      <button onclick="calculate()">Calculate</button>
+      <button onclick="calculate()" class="calculate-btn">Calculate</button>
       <label>
         <input type="checkbox" id="liveCalcToggle" checked /> Live Calculate
       </label>
