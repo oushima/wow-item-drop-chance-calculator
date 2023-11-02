@@ -78,7 +78,7 @@ def fetch_character_data(local_access_token, local_region,
         f"?namespace=profile-{region}&locale=en_US"
     )
     headers = {'Authorization': f"Bearer {local_access_token}"}
-    response = requests.get(api_url, headers=headers, timeout=5)
+    response = requests.get(api_url, headers=headers, timeout=30)
 
     if response.status_code == 200:
         return json.loads(response.text)
