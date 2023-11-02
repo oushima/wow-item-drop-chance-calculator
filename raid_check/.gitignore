@@ -1,0 +1,6 @@
+*.txt
+config.py
+*.env
+*.pyc
+
+!example.env

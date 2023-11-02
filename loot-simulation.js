@@ -12,6 +12,10 @@
  * successful loot in 'numAttemptsPerSimulation' tries, which can be used to compare
  * with theoretical probabilities.
  */
+// Parameters for the simulation
+const DROP_RATE = 0.77;
+const NUM_ATTEMPTS_PER_SIMULATION = 300;
+const NUM_SIMULATIONS = 10 ** 7; // Ten million simulations.
 
 function simulateLootAttempts(dropRate, numAttempts) {
   let successfulLoots = 0;
@@ -23,23 +27,18 @@ function simulateLootAttempts(dropRate, numAttempts) {
   return successfulLoots;
 }
 
-// Parameters for the simulation
-const dropRate = 0.29;
-const numAttemptsPerSimulation = 100;
-const numSimulations = 10 ** 7; // Ten million simulations
-
 // Variable to count successful simulations
 let successfulSimulations = 0;
 
 // Run simulations
-for (let i = 0; i < numSimulations; i++) {
-  if (simulateLootAttempts(dropRate, numAttemptsPerSimulation) >= 1) {
+for (let i = 0; i < NUM_SIMULATIONS; i++) {
+  if (simulateLootAttempts(DROP_RATE, NUM_ATTEMPTS_PER_SIMULATION) >= 1) {
     successfulSimulations++;
   }
 }
 
 // Calculate and display likelihood
-const likelihood = (successfulSimulations / numSimulations) * 100;
+const likelihood = (successfulSimulations / NUM_SIMULATIONS) * 100;
 console.log(
   `The estimated likelihood of getting at least one drop in 100 tries is about ${likelihood.toFixed(
     2
