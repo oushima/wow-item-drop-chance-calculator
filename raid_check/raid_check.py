@@ -55,12 +55,14 @@ def fetch_blizzard_token(local_client_id, local_client_secret, local_region):
     data = {'grant_type': 'client_credentials'}
     url = f'https://{local_region}.battle.net/oauth/token'
     response = requests.post(url, data=data, auth=auth, timeout=10)
+    print(response.json().get('access_token'))
     return (response.json().get('access_token')
             if response.status_code == 200 else None)
 
 
 def fetch_character_data(local_access_token, local_region,
-                         local_realm_slug, local_character_name):
+                         local_realm_slug, local_character_name,
+                         local_difficulty_dict):
     """Fetch character data from the WoW API.
 
     Args:
@@ -86,8 +88,35 @@ def fetch_character_data(local_access_token, local_region,
         print(f"Failed to fetch data for {local_character_name}-"
               f"{local_realm_slug} with status code "
               f"{response.status_code}")
+        key_name = 'API ERROR'
+        set_dict_item(local_character_name,
+                      local_realm_slug, local_difficulty_dict, key_name)
 
-        return None
+
+def set_dict_item(local_character_name,
+                  local_realm_slug, local_difficulty_dict, key_name):
+    """Set character as unprecidented.
+
+    Args:
+        key_name (string): key name of the dictionary item.
+        local_difficulty_dict (dict): Dictionary to store difficulties data.
+        local_realm_slug (str): The slug of the realm for the character.
+        local_character_name (str): The name of the character.
+
+    Returns:
+        None
+    """
+    if (key_name not
+            in local_difficulty_dict):
+        local_difficulty_dict[key_name]\
+            = []
+
+    character_with_realm_name = (
+        f'{local_character_name}-{local_realm_slug}')
+    if (character_with_realm_name not in
+            local_difficulty_dict[key_name]):
+        local_difficulty_dict[key_name]\
+            .append(character_with_realm_name)
 
 
 def check_last_kill(data, char_name, local_realm_slug, local_raid_name,
@@ -119,6 +148,13 @@ def check_last_kill(data, char_name, local_realm_slug, local_raid_name,
     )
 
     if data:
+        for dummy in data:
+            if not data.get('expansions'):
+                set_dict_item(
+                    data.get('character').get('name').lower(),
+                    local_realm_slug, local_difficulty_dict,
+                    f'{RAID_NAME} - Never Done Before')
+
         for expansion in data.get('expansions', []):
             for instance in expansion.get('instances', []):
                 if instance.get('instance', {}).get('name') == local_raid_name:
@@ -189,7 +225,8 @@ if __name__ == "__main__":
         for realm_slug, character_names in CHARACTER_REALM_MAPPING.items():
             for character_name in character_names:
                 character_data = fetch_character_data(
-                    access_token, region, realm_slug, character_name)
+                    access_token, region, realm_slug, character_name,
+                    difficulty_dict)
                 if character_data:
                     check_last_kill(character_data, character_name,
                                     realm_slug, RAID_NAME, RAID_BOSS,
