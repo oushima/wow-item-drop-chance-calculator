@@ -155,9 +155,11 @@ def check_last_kill(data, char_name, local_realm_slug, local_raid_name,
                     local_realm_slug, local_difficulty_dict,
                     f'{RAID_NAME} - Never Done Before')
 
+        found_raid = False
         for expansion in data.get('expansions', []):
             for instance in expansion.get('instances', []):
                 if instance.get('instance', {}).get('name') == local_raid_name:
+                    found_raid = True
                     for mode in instance.get('modes', []):
                         for encounter in mode.get(
                                 'progress', {}).get('encounters', []):
@@ -210,6 +212,11 @@ def check_last_kill(data, char_name, local_realm_slug, local_raid_name,
                                     completed_count
                                 )
                                 break
+        if not found_raid:
+            set_dict_item(
+                data.get('character').get('name').lower(),
+                local_realm_slug, local_difficulty_dict,
+                f'{RAID_NAME} - Never Done Before')
 
 
 if __name__ == "__main__":
